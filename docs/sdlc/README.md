@@ -5,7 +5,7 @@
 <!-- sdlc:auto:start overview -->
 Human resource management system
 
-**Documentation version:** v2
+**Documentation version:** v3
 <!-- sdlc:auto:end overview -->
 
 ## Contents
@@ -15,14 +15,14 @@ Human resource management system
 |---|---|
 | [Requirements](requirements/README.md) | v1 approved |
 | [Architecture](architecture/README.md) | 14 entries |
-| [Development](development/README.md) | 1 entry |
+| [Development](development/README.md) | 12 entries |
 | [Testing](testing/README.md) | 1 entry |
 | [Deployment](deployment/README.md) | 1 entry |
 | [Maintenance](maintenance/README.md) | 1 entry |
 | [Data model](architecture/data-model.md) | generated |
 | [API (OpenAPI)](architecture/api/openapi.yaml) | generated |
 | [Decisions (ADRs)](architecture/adr/README.md) | 4 decisions |
-| [Sprint plan](development/sprint-plan.md) | not generated yet |
+| [Sprint plan](development/sprint-plan.md) | 5 sprints |
 | [Developer guide](development/developer-guide.md) | generated |
 | [API reference](development/api-reference.md) | 1 route |
 | [Test report](testing/test-report.md) | not run yet |
@@ -31,7 +31,7 @@ Human resource management system
 | [Runbook](deployment/runbook.md) | not deployed yet |
 | [Release notes](deployment/release-notes.md) | 0 releases |
 | [Traceability matrix](traceability-matrix.md) | 18 requirements |
-| [Changelog](CHANGELOG.md) | 2 versions |
+| [Changelog](CHANGELOG.md) | 3 versions |
 <!-- sdlc:auto:end contents -->
 
 ## Open gaps
@@ -68,7 +68,17 @@ Human resource management system
 
 ### Development
 
-- Development phase has not started -- no planning or implementation input is available.
+- No development execution data (ticket completion status, commits, code review outcomes, test run results) was provided for this phase — only the backlog/sprint plan is available.
+- Sprint-to-story assignment is not an explicit field in the input; it is inferred per sprint from goal wording and point-total alignment with capacity (see individual Sprint entries) — recommend the team confirm these mappings are correct.
+- Sprint-to-story mapping is inferred, not explicitly tagged in the input (see PLAN-001 open gap).
+- This sprint's goal text explicitly says 'user provisioning', but the only provisioning story (US-003) was placed in Sprint 1 based on its point total fitting Sprint 1's capacity exactly — the two sprints' goal wording overlaps and should be clarified with the team.
+- 5 of the 20 capacity points are not accounted for by any listed story in this sprint; may be task-level buffer or an unlisted item.
+- Sprint-to-story mapping is inferred, not explicitly tagged in the input.
+- 1 point of capacity is unaccounted for; likely minor buffer.
+- 4 points of capacity (the largest gap among all sprints) are unaccounted for by listed stories — worth confirming whether additional scope was planned but omitted from this input.
+- US-002-T4 (RBAC enforcement test suite) is assigned to qa-agent, but no test results or pass/fail status were included in this phase's input.
+- DPDP compliance: privacy notice (US-017) and India data residency (US-018) are currently only planned backlog stories — no evidence of actual implementation, legal sign-off on notice content, or verification that data residency is enforced has been provided yet.
+- No story in this input addresses DPDP breach-notification or data-principal grievance-redressal obligations — confirm whether these are out of scope or simply not yet planned.
 
 ### Testing
 
