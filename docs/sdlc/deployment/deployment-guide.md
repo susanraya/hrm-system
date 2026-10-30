@@ -7,7 +7,13 @@ Pushes to `main` run `.github/workflows/deploy.yml`, which builds the API image 
 <!-- sdlc:auto:end how-it-deploys -->
 
 <!-- sdlc:auto:start environments -->
-_No environments recorded._
+| Name | Service | Runtime | Scaling | Environment |
+|---|---|---|---|---|
+| React SPA | Static web app (S3 + CloudFront) | Browser / CDN | CDN edge | dev |
+| Django API | Containerised Django 5.1 + Gunicorn | AWS ECS Fargate (ap-south-1) | 1-2 tasks, adequate for ~200 employees | dev |
+| PostgreSQL | Amazon RDS for PostgreSQL 16 | RDS (ap-south-1) | Single instance, encrypted at rest | dev |
+| Document bucket | Amazon S3 (private) | S3 (ap-south-1) | Managed | dev |
+| SendGrid | SendGrid transactional email API | SaaS (HTTPS) | Managed | dev |
 <!-- sdlc:auto:end environments -->
 
 <!-- sdlc:auto:start live -->
@@ -15,5 +21,16 @@ _Not deployed yet._
 <!-- sdlc:auto:end live -->
 
 <!-- sdlc:auto:start topology -->
-_No deployment topology recorded._
+```mermaid
+graph LR
+  n_React_SPA["React SPA<br/>Static web app (S3 + CloudFront)"]
+  n_Django_API["Django API<br/>Containerised Django 5.1 + Gunicorn"]
+  n_PostgreSQL["PostgreSQL<br/>Amazon RDS for PostgreSQL 16"]
+  n_Document_bucket["Document bucket<br/>Amazon S3 (private)"]
+  n_SendGrid["SendGrid<br/>SendGrid transactional email API"]
+  n_React_SPA -->|"HTTPS"| n_Django_API
+  n_Django_API -->|"TLS (PostgreSQL wire)"| n_PostgreSQL
+  n_Django_API -->|"HTTPS"| n_Document_bucket
+  n_Django_API -->|"HTTPS"| n_SendGrid
+```
 <!-- sdlc:auto:end topology -->

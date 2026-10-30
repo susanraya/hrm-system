@@ -2,6 +2,725 @@
 openapi: 3.1.0
 info:
   title: HRM SYSTEM
-  version: architecture-v0
+  version: architecture-v1
   description: Designed API from the approved architecture (not extracted from code).
-paths: {}
+paths:
+  /api/attendance/check-in:
+    post:
+      summary: Employee checks in; records timestamp only, no geolocation/biometrics.
+      description: Employee checks in; records timestamp only, no geolocation/biometrics.
+      operationId: post_api_attendance_check_in
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{}'
+      responses:
+        '200':
+          description: '{attendance}'
+      security:
+      - bearerAuth: []
+  /api/attendance/check-out:
+    post:
+      summary: Employee checks out; computes worked duration, blocks duplicate check-out.
+      description: Employee checks out; computes worked duration, blocks duplicate
+        check-out.
+      operationId: post_api_attendance_check_out
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{}'
+      responses:
+        '200':
+          description: '{attendance}'
+      security:
+      - bearerAuth: []
+  /api/attendance/me:
+    get:
+      summary: Employee views own recent attendance.
+      description: Employee views own recent attendance.
+      operationId: get_api_attendance_me
+      parameters: []
+      responses:
+        '200':
+          description: '[{attendance}]'
+      security:
+      - bearerAuth: []
+  /api/attendance/team:
+    get:
+      summary: Manager views direct reports' attendance for a date range.
+      description: Manager views direct reports' attendance for a date range.
+      operationId: get_api_attendance_team
+      parameters: []
+      responses:
+        '200':
+          description: '[{attendance}]'
+      security:
+      - bearerAuth: []
+  /api/auth/login:
+    post:
+      summary: Authenticate with email/password and return a JWT; generic failure
+        message on any mismatch.
+      description: Authenticate with email/password and return a JWT; generic failure
+        message on any mismatch.
+      operationId: post_api_auth_login
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{email, password}'
+      responses:
+        '200':
+          description: '{access_token, role}'
+  /api/auth/password-reset:
+    post:
+      summary: Request a time-limited password reset link sent by email.
+      description: Request a time-limited password reset link sent by email.
+      operationId: post_api_auth_password_reset
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{email}'
+      responses:
+        '200':
+          description: 202 Accepted
+  /api/auth/password-reset/confirm:
+    post:
+      summary: Set a new password using a valid, unexpired reset token.
+      description: Set a new password using a valid, unexpired reset token.
+      operationId: post_api_auth_password_reset_confirm
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{token, new_password}'
+      responses:
+        '200':
+          description: 200 OK
+  /api/employees:
+    get:
+      summary: List/search employee directory (HR/admin); managers see only direct
+        reports.
+      description: List/search employee directory (HR/admin); managers see only direct
+        reports.
+      operationId: get_api_employees
+      parameters: []
+      responses:
+        '200':
+          description: '[{employee}]'
+      security:
+      - bearerAuth: []
+    post:
+      summary: HR/admin creates an employee record; mandatory fields validated.
+      description: HR/admin creates an employee record; mandatory fields validated.
+      operationId: post_api_employees
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{personal, contact, job, department, manager, start_date}'
+      responses:
+        '200':
+          description: '{employee}'
+      security:
+      - bearerAuth: []
+  /api/employees/import:
+    post:
+      summary: HR/admin bulk-imports employees from a spreadsheet; valid rows created,
+        failures reported.
+      description: HR/admin bulk-imports employees from a spreadsheet; valid rows
+        created, failures reported.
+      operationId: post_api_employees_import
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: multipart file
+      responses:
+        '200':
+          description: '{created, failed:[{row, error}]}'
+      security:
+      - bearerAuth: []
+  /api/employees/me:
+    get:
+      summary: Employee views own profile.
+      description: Employee views own profile.
+      operationId: get_api_employees_me
+      parameters: []
+      responses:
+        '200':
+          description: '{employee}'
+      security:
+      - bearerAuth: []
+  /api/employees/{id}:
+    patch:
+      summary: HR/admin edits a record; employee updates own correctable contact fields
+        or files a correction request.
+      description: HR/admin edits a record; employee updates own correctable contact
+        fields or files a correction request.
+      operationId: patch_api_employees_id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{fields}'
+      responses:
+        '200':
+          description: '{employee}'
+      security:
+      - bearerAuth: []
+  /api/employees/{id}/documents:
+    post:
+      summary: Upload an ID document; type/size validated, stored privately in S3.
+      description: Upload an ID document; type/size validated, stored privately in
+        S3.
+      operationId: post_api_employees_id_documents
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: multipart file, doc_type
+      responses:
+        '200':
+          description: '{document}'
+      security:
+      - bearerAuth: []
+  /api/employees/{id}/documents/{doc_id}:
+    get:
+      summary: Returns a short-lived pre-signed S3 URL for an authorised user.
+      description: Returns a short-lived pre-signed S3 URL for an authorised user.
+      operationId: get_api_employees_id_documents_doc_id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: doc_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '{presigned_url}'
+      security:
+      - bearerAuth: []
+  /api/holidays:
+    post:
+      summary: HR/admin configures holidays and weekend days.
+      description: HR/admin configures holidays and weekend days.
+      operationId: post_api_holidays
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{holiday_date, name} or {weekend_days}'
+      responses:
+        '200':
+          description: '{holiday}'
+      security:
+      - bearerAuth: []
+  /api/leave-requests:
+    post:
+      summary: Employee applies for leave; balance/overlap validated, holidays/weekends
+        excluded, manager emailed.
+      description: Employee applies for leave; balance/overlap validated, holidays/weekends
+        excluded, manager emailed.
+      operationId: post_api_leave_requests
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{leave_type_id, start_date, end_date, reason}'
+      responses:
+        '200':
+          description: '{leave_request}'
+      security:
+      - bearerAuth: []
+  /api/leave-requests/queue:
+    get:
+      summary: Manager views pending requests from direct reports only.
+      description: Manager views pending requests from direct reports only.
+      operationId: get_api_leave_requests_queue
+      parameters: []
+      responses:
+        '200':
+          description: '[{leave_request}]'
+      security:
+      - bearerAuth: []
+  /api/leave-requests/{id}/decide:
+    patch:
+      summary: Manager approves (reduces balance in a transaction) or rejects with
+        reason; employee emailed.
+      description: Manager approves (reduces balance in a transaction) or rejects
+        with reason; employee emailed.
+      operationId: patch_api_leave_requests_id_decide
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{decision, reason}'
+      responses:
+        '200':
+          description: '{leave_request}'
+      security:
+      - bearerAuth: []
+  /api/leave-types:
+    post:
+      summary: HR/admin defines a leave type with balance and accrual rule.
+      description: HR/admin defines a leave type with balance and accrual rule.
+      operationId: post_api_leave_types
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{name, annual_balance, accrual_rule}'
+      responses:
+        '200':
+          description: '{leave_type}'
+      security:
+      - bearerAuth: []
+  /api/privacy-notice:
+    get:
+      summary: Returns the current privacy notice version to any signed-in user.
+      description: Returns the current privacy notice version to any signed-in user.
+      operationId: get_api_privacy_notice
+      parameters: []
+      responses:
+        '200':
+          description: '{version, content}'
+      security:
+      - bearerAuth: []
+  /api/reports/{type}:
+    get:
+      summary: HR/admin views attendance/leave report with date range and filters;
+        empty result handled.
+      description: HR/admin views attendance/leave report with date range and filters;
+        empty result handled.
+      operationId: get_api_reports_type
+      parameters:
+      - name: type
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '[{row}] or empty message'
+      security:
+      - bearerAuth: []
+  /api/reports/{type}/export:
+    get:
+      summary: HR/admin exports the displayed report as CSV or Excel.
+      description: HR/admin exports the displayed report as CSV or Excel.
+      operationId: get_api_reports_type_export
+      parameters:
+      - name: type
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: file (CSV/XLSX)
+      security:
+      - bearerAuth: []
+  /api/users:
+    post:
+      summary: HR/admin creates a user account and assigns a role.
+      description: HR/admin creates a user account and assigns a role.
+      operationId: post_api_users
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{email, role, employee_fields}'
+      responses:
+        '200':
+          description: '{id, email, role}'
+      security:
+      - bearerAuth: []
+  /api/users/{id}/deactivate:
+    patch:
+      summary: HR/admin deactivates an account while retaining historical records.
+      description: HR/admin deactivates an account while retaining historical records.
+      operationId: patch_api_users_id_deactivate
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: '{}'
+      responses:
+        '200':
+          description: '{id, is_active}'
+      security:
+      - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    users:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        password_hash:
+          type: string
+        role:
+          type: string
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - email
+      - password_hash
+      - role
+      - is_active
+      - created_at
+    departments:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+      required:
+      - id
+      - name
+    employees:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+        last_name:
+          type: string
+        work_email:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        designation:
+          type: string
+        department_id:
+          type: string
+          format: uuid
+        manager_id:
+          type: string
+          format: uuid
+        employment_start_date:
+          type: string
+          format: date
+        employment_end_date:
+          type: string
+          format: date
+      required:
+      - id
+      - user_id
+      - first_name
+      - last_name
+      - work_email
+      - employment_start_date
+    employee_documents:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        employee_id:
+          type: string
+          format: uuid
+        doc_type:
+          type: string
+        s3_key:
+          type: string
+        file_name:
+          type: string
+        content_type:
+          type: string
+        size_bytes:
+          type: integer
+        uploaded_by:
+          type: string
+          format: uuid
+        uploaded_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - employee_id
+      - doc_type
+      - s3_key
+      - file_name
+      - content_type
+      - size_bytes
+      - uploaded_by
+      - uploaded_at
+    correction_requests:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        employee_id:
+          type: string
+          format: uuid
+        field_name:
+          type: string
+        requested_value:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - employee_id
+      - field_name
+      - requested_value
+      - status
+      - created_at
+    leave_types:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        annual_balance:
+          type: number
+        accrual_rule:
+          type: string
+        is_active:
+          type: boolean
+      required:
+      - id
+      - name
+      - annual_balance
+      - accrual_rule
+      - is_active
+    leave_balances:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        employee_id:
+          type: string
+          format: uuid
+        leave_type_id:
+          type: string
+          format: uuid
+        year:
+          type: integer
+        balance:
+          type: number
+      required:
+      - id
+      - employee_id
+      - leave_type_id
+      - year
+      - balance
+    leave_requests:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        employee_id:
+          type: string
+          format: uuid
+        leave_type_id:
+          type: string
+          format: uuid
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        days_deducted:
+          type: number
+        reason:
+          type: string
+        status:
+          type: string
+        decided_by:
+          type: string
+          format: uuid
+        decision_reason:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - employee_id
+      - leave_type_id
+      - start_date
+      - end_date
+      - days_deducted
+      - status
+      - created_at
+    holidays:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        holiday_date:
+          type: string
+          format: date
+        name:
+          type: string
+      required:
+      - id
+      - holiday_date
+      - name
+    weekend_config:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        day_of_week:
+          type: integer
+      required:
+      - id
+      - day_of_week
+    attendance:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        employee_id:
+          type: string
+          format: uuid
+        work_date:
+          type: string
+          format: date
+        check_in:
+          type: string
+          format: date-time
+        check_out:
+          type: string
+          format: date-time
+        worked_minutes:
+          type: integer
+      required:
+      - id
+      - employee_id
+      - work_date
+      - check_in
+    privacy_notices:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        version:
+          type: string
+        content:
+          type: string
+        published_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - version
+      - content
+      - published_at
+    audit_logs:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        action:
+          type: string
+        resource:
+          type: string
+        ip_address:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - action
+      - resource
+      - created_at
