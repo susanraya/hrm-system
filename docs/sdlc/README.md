@@ -5,7 +5,7 @@
 <!-- sdlc:auto:start overview -->
 Human resource management system
 
-**Documentation version:** v3
+**Documentation version:** v4
 <!-- sdlc:auto:end overview -->
 
 ## Contents
@@ -27,11 +27,11 @@ Human resource management system
 | [API reference](development/api-reference.md) | 1 route |
 | [Test report](testing/test-report.md) | not run yet |
 | [Tests](testing/test-cases.md) | 0 tests |
-| [Deployment guide](deployment/deployment-guide.md) | not deployed yet |
-| [Runbook](deployment/runbook.md) | not deployed yet |
-| [Release notes](deployment/release-notes.md) | 0 releases |
+| [Deployment guide](deployment/deployment-guide.md) | deployed |
+| [Runbook](deployment/runbook.md) | deployed |
+| [Release notes](deployment/release-notes.md) | 1 release |
 | [Traceability matrix](traceability-matrix.md) | 18 requirements |
-| [Changelog](CHANGELOG.md) | 3 versions |
+| [Changelog](CHANGELOG.md) | 4 versions |
 <!-- sdlc:auto:end contents -->
 
 ## Open gaps
@@ -86,7 +86,12 @@ Human resource management system
 
 ### Deployment
 
-- No deployment recorded yet; data residency and other production configuration cannot be verified.
+- No deployment date recorded.
+- No record of who approved or executed this deployment.
+- No release notes or changelog indicating which requirements/features (e.g. US-001..US-018) this version includes.
+- No rollback or incident-response plan documented.
+- No post-deployment verification or test results referenced for this version.
+- No monitoring/alerting configuration documented for the live environment.
 
 ### Maintenance
 
